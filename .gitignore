@@ -1,0 +1,15 @@
+node_modules/
+dist/
+coverage/
+.pytest_cache/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+.DS_Store
+.vscode/
+.idea/
+.nyc_output/
+*.log
+*.tsbuildinfo

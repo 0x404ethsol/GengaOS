@@ -1,0 +1,540 @@
+{
+  "project": "GengaOS",
+  "branchName": "ralph/anime-ide-signature-experience",
+  "description": "Implement the signature anime-only IDE experience for GengaOS with director-native workflows, continuity safety, extension runtime flexibility, and premium production tooling.",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Create anime domain language map for UI labels",
+      "description": "As a creator, I want domain-native labels (Cast, Block, Shoot, Sakuga, Cut, Deliver) so the product feels like an anime studio.",
+      "acceptanceCriteria": [
+        "Add shared terminology map package for key UI copy",
+        "Expose helper utilities for section and action labels",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-002",
+      "title": "Apply anime domain language across studio shell",
+      "description": "As a creator, I want every major panel and control to use anime production language.",
+      "acceptanceCriteria": [
+        "Update app shell labels to terminology map values",
+        "Update node/panel headers for Cast, Block, Shoot, Sakuga, Cut, Deliver",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "Add command palette action registry",
+      "description": "As a power user, I want a centralized action registry for anime workflow commands.",
+      "acceptanceCriteria": [
+        "Create typed command registry with action id, label, scope, and handler",
+        "Register starter actions for generate impact cut, lock actor style, and retake continuity",
+        "Typecheck passes"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Implement command palette UI and keyboard shortcut",
+      "description": "As a creator, I want to trigger major actions from a keyboard-first palette.",
+      "acceptanceCriteria": [
+        "Add global shortcut to open command palette",
+        "Command palette can search and execute registered actions",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 4,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Add cinematic motion and sound cue design tokens",
+      "description": "As a creator, I want premium transitions and audio cues tied to major workflow events.",
+      "acceptanceCriteria": [
+        "Define reusable motion timing tokens and transition presets",
+        "Add sound cue mapping for lock issued, render accepted, and retake required",
+        "Typecheck passes"
+      ],
+      "priority": 5,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Build first 60 seconds guided startup",
+      "description": "As a new user, I want a guided first scene flow so I never face a blank canvas.",
+      "acceptanceCriteria": [
+        "Add startup guide with script, cast, pose, render, and export steps",
+        "Guide can pre-seed a starter graph from a selected template",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 6,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Add sakuga timeline data model",
+      "description": "As a director, I need timeline primitives for holds, smears, impact frames, and shake envelopes.",
+      "acceptanceCriteria": [
+        "Define contracts for frame holds, smear markers, impact markers, and shake curves",
+        "Persist sakuga timeline payload in graph revision model",
+        "Typecheck passes"
+      ],
+      "priority": 7,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "Implement sakuga timeline editor UI",
+      "description": "As a director, I want to edit anime-specific timing controls directly in the IDE.",
+      "acceptanceCriteria": [
+        "Add timeline editor controls for holds, smears, and impact markers",
+        "Add camera shake envelope editor with live value updates",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 8,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "Create anime camera grammar preset service",
+      "description": "As a director, I want reusable anime shot grammar presets for lens and movement language.",
+      "acceptanceCriteria": [
+        "Define preset schema with lens, movement, framing, and emotional intent",
+        "Expose API to list and apply preset payloads",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 9,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-010",
+      "title": "Integrate camera grammar presets into virtual set node",
+      "description": "As a director, I want one-click camera grammar presets in the virtual set viewport.",
+      "acceptanceCriteria": [
+        "Virtual set node can select and apply camera grammar presets",
+        "Applied preset values persist in node state",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 10,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-011",
+      "title": "Build continuity scan scoring service",
+      "description": "As a director, I want identity, prop, and axis continuity scoring before accepting renders.",
+      "acceptanceCriteria": [
+        "Add continuity scan contracts for identity, pose, prop, and camera axis checks",
+        "Implement API scoring endpoint and audit events",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 11,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-012",
+      "title": "Add continuity heatmap and retake UI",
+      "description": "As a director, I want continuity issues visualized with actionable retake suggestions.",
+      "acceptanceCriteria": [
+        "Render continuity heatmap overlays in studio UI",
+        "Provide retake actions linked to detected issue categories",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 12,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-013",
+      "title": "Create expression rig and mouth chart backend model",
+      "description": "As an animator, I need expression and phoneme data structures for anime dialog beats.",
+      "acceptanceCriteria": [
+        "Define expression profile and phoneme chart contracts",
+        "Expose API endpoints to create and fetch expression profiles",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 13,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-014",
+      "title": "Implement expression and lip-sync timeline UI",
+      "description": "As an animator, I want to edit expression and mouth-chart timing directly against scene timing.",
+      "acceptanceCriteria": [
+        "Add expression timeline controls with phoneme key assignment",
+        "Support take selection and timeline preview sync",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 14,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-015",
+      "title": "Add pose library and reuse backend",
+      "description": "As a director, I want a reusable library of anime archetype poses and camera blocks.",
+      "acceptanceCriteria": [
+        "Define pose library schema with archetype metadata",
+        "Add save/load/list API for pose and camera presets",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 15,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-016",
+      "title": "Implement pose-to-pose controls in virtual set",
+      "description": "As a director, I want to apply key poses and interpolation constraints from the pose library.",
+      "acceptanceCriteria": [
+        "Virtual set node can apply saved poses to mannequins",
+        "Interpolation constraints can be configured between selected key poses",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 16,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-017",
+      "title": "Implement FX composer execution backend",
+      "description": "As a director, I want speed lines, aura, and impact effects to be part of render requests.",
+      "acceptanceCriteria": [
+        "Define FX stack schema for layered anime effects",
+        "Extend render request handling to include FX stack payload",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 17,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-018",
+      "title": "Build FX composer node UI",
+      "description": "As a director, I want a visual FX stack editor inside the graph.",
+      "acceptanceCriteria": [
+        "Add FX composer node with layer add/remove/reorder controls",
+        "FX node output can feed Sakuga pipeline settings",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 18,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-019",
+      "title": "Add color script lane backend and rules",
+      "description": "As a director, I need palette progression storage and continuity validation across scenes.",
+      "acceptanceCriteria": [
+        "Define color script lane contracts linked to scene and style bible",
+        "Add palette continuity rule checks and suggestion endpoint",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 19,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-020",
+      "title": "Implement color script lane UI",
+      "description": "As a director, I want to visually edit and review palette progression over the episode timeline.",
+      "acceptanceCriteria": [
+        "Add color script lane timeline with per-scene palette blocks",
+        "Display palette drift warnings in the review panel",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 20,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-021",
+      "title": "Add background layout assistant backend",
+      "description": "As a layout artist, I need perspective and parallax data structures for anime environments.",
+      "acceptanceCriteria": [
+        "Define background layer schema with depth and perspective metadata",
+        "Add API operations for perspective guides and layer export payloads",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 21,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-022",
+      "title": "Implement background layout assistant UI",
+      "description": "As a layout artist, I want perspective guides and parallax controls directly in scene tools.",
+      "acceptanceCriteria": [
+        "Add perspective grid and vanishing point controls in virtual set tools",
+        "Add background layer panel with depth ordering and export action",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 22,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-023",
+      "title": "Implement animatic pipeline backend",
+      "description": "As a solo creator, I want audio beats and clip cuts to generate render queues and recover failed jobs.",
+      "acceptanceCriteria": [
+        "Add animatic contracts for audio tracks, beat markers, and clip cuts",
+        "Generate render queue from animatic timeline",
+        "Support resume from last good frame for failed interpolation jobs",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 23,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-024",
+      "title": "Implement synced video editor and auto deliverables UI",
+      "description": "As a solo creator, I want the cut editor synced with graph outputs and one-click exports.",
+      "acceptanceCriteria": [
+        "Sync video editor clip list with scene graph node outputs",
+        "Add export actions for animatic, frame sheets, social clips, and review links",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 24,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-025",
+      "title": "Upgrade extension platform contracts and policy enforcement",
+      "description": "As an operator, I need extension manifests and policies tailored for anime-safe runtime execution.",
+      "acceptanceCriteria": [
+        "Extend manifest schema with anime category, trust flags, pricing, and agent runtime metadata",
+        "Enforce extension permission checks and sandbox policy on execute",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 25,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-026",
+      "title": "Build curated anime extension store UX",
+      "description": "As a creator, I want an anime-curated extension store with runtime selection and trust visibility.",
+      "acceptanceCriteria": [
+        "Show Approved for Anime Production badges and category filters",
+        "Provide per-extension runtime selection and permission prompts",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 26,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-027",
+      "title": "Implement style DNA lock backend enforcement",
+      "description": "As a studio lead, I need immutable style constraints enforced with identity lock on generation requests.",
+      "acceptanceCriteria": [
+        "Add style DNA schema with versioned immutable profiles",
+        "Require both actorLockId and styleDnaId for generation endpoints",
+        "Write audit events for style lock pass/fail decisions",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 27,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-028",
+      "title": "Add style DNA lock and drift review UI",
+      "description": "As a studio lead, I want to manage style locks and inspect drift before accepting shots.",
+      "acceptanceCriteria": [
+        "Add style DNA management panel with lock and version visibility",
+        "Display drift findings with retake suggestions in review UI",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 28,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-029",
+      "title": "Implement inspiration ranking and remix backend",
+      "description": "As a creator, I want context-aware scene idea ranking and remix payload generation.",
+      "acceptanceCriteria": [
+        "Rank scene ideas using project style, script beats, and recent graph context",
+        "Add remix endpoint that returns node-prefill payloads",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 29,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-030",
+      "title": "Implement remixable inspiration cloud UX",
+      "description": "As a creator, I want floating scene cards that can instantly seed my graph.",
+      "acceptanceCriteria": [
+        "Idea cloud cards show theme, mood, and prompt seed with remix action",
+        "Remix action creates or updates relevant graph nodes",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 30,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-031",
+      "title": "Add episode production board backend",
+      "description": "As a solo showrunner, I want shot/task dependency planning and critical path calculations.",
+      "acceptanceCriteria": [
+        "Define episode board schema for shots, tasks, dependencies, and statuses",
+        "Implement critical path and blocker computation endpoint",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 31,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-032",
+      "title": "Implement episode production board UI",
+      "description": "As a solo showrunner, I want board views that highlight blockers and path-to-release risk.",
+      "acceptanceCriteria": [
+        "Add board interface for shot/task states and dependency links",
+        "Highlight critical path items and blocked work",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 32,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-033",
+      "title": "Implement director notes parser backend",
+      "description": "As a director, I want free-text notes transformed into safe structured edit suggestions.",
+      "acceptanceCriteria": [
+        "Add notes parser endpoint returning structured proposed actions",
+        "Return confidence and validation warnings for each proposed action",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 33,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-034",
+      "title": "Add notes-to-actions command flow with undo",
+      "description": "As a director, I want to review and apply parsed notes through the command palette with rollback.",
+      "acceptanceCriteria": [
+        "Command palette shows parsed note actions with preview-before-apply",
+        "Applied note actions can be reverted from an undo stack",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 34,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-035",
+      "title": "Add provenance ledger and variant telemetry backend",
+      "description": "As an operator, I need immutable provenance and scoring signals for generated assets and variants.",
+      "acceptanceCriteria": [
+        "Record provenance events for model, extension, and source asset lineage",
+        "Store variant telemetry metrics for shot quality comparisons",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 35,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-036",
+      "title": "Build rights dashboard, A/B compare, and performance coach UI",
+      "description": "As a solo creator, I want legal confidence, variant comparison, and acting/timing coaching in one review surface.",
+      "acceptanceCriteria": [
+        "Add rights/provenance dashboard with exportable report",
+        "Add A/B variant comparison panel with telemetry score visibility",
+        "Add performance coach hints for timing and acting intensity adjustments",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 36,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-037",
+      "title": "Implement director redline and approval backend",
+      "description": "As an animation director, I need frame-accurate redlines and explicit approval gates before final publish.",
+      "acceptanceCriteria": [
+        "Add redline annotation schema with frame range, draw path refs, and severity",
+        "Add approval gate endpoints for submit, approve, reject, and revision requests",
+        "Persist reviewer decisions in audit log with immutable event ids",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 37,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-038",
+      "title": "Build redline overlay and approval gate UI",
+      "description": "As an animation director, I want to mark frames with draw-over notes and block delivery until approved.",
+      "acceptanceCriteria": [
+        "Add redline overlay tool in playback/review surface with frame-level annotations",
+        "Add approval panel with Approve, Request Changes, and Reject actions",
+        "Display approval status on timeline and deliverables panel",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 38,
+      "passes": true,
+      "notes": ""
+    }
+  ]
+}

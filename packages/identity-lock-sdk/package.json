@@ -1,0 +1,15 @@
+{
+  "name": "@genga/identity-lock-sdk",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "echo \"No runtime tests yet for identity-lock-sdk\""
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4"
+  }
+}

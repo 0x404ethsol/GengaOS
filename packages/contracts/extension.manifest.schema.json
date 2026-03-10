@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GengaOS Extension Manifest",
+  "type": "object",
+  "required": ["id", "name", "version", "description", "animeCategory", "trustLevel", "pricingModel", "scopes", "capabilities"],
+  "properties": {
+    "id": { "type": "string" },
+    "name": { "type": "string" },
+    "version": { "type": "string" },
+    "description": { "type": "string" },
+    "animeCategory": {
+      "type": "string",
+      "enum": ["storyboard", "color", "fx", "layout", "pipeline", "voice", "automation"]
+    },
+    "protocol": { "type": "string", "default": "mcp" },
+    "executionMode": { "type": "string", "enum": ["local", "remote", "hybrid"], "default": "hybrid" },
+    "authMode": {
+      "type": "string",
+      "enum": ["bring-your-own-key", "genga_credit_proxy", "none"],
+      "default": "genga_credit_proxy"
+    },
+    "agentRuntimes": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "agentRuntimeMeta": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["runtime"],
+        "properties": {
+          "runtime": { "type": "string" },
+          "supportsStreaming": { "type": "boolean", "default": false },
+          "maxConcurrency": { "type": "integer", "minimum": 1, "default": 1 }
+        }
+      }
+    },
+    "trustLevel": { "type": "string", "enum": ["sandboxed", "trusted", "privileged"] },
+    "trustFlags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "sandboxPolicy": {
+      "type": "object",
+      "properties": {
+        "allowedRuntimes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "blockedScopes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "maxPayloadKeys": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "pricingModel": { "type": "string", "enum": ["free", "credit", "subscription", "bring-your-own-key"] },
+    "scopes": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "description", "fields"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "requiredScopes": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "permissionPrompt": { "type": "string" },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["key", "label", "type"],
+              "properties": {
+                "key": { "type": "string" },
+                "label": { "type": "string" },
+                "type": { "type": "string", "enum": ["text", "number", "boolean", "select"] },
+                "required": { "type": "boolean" },
+                "options": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

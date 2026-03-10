@@ -1,0 +1,6 @@
+*       @0x404ethsol
+/docs/** @0x404ethsol
+/infra/** @0x404ethsol
+/services/control-api/** @0x404ethsol
+/services/inference-api/** @0x404ethsol
+/tools/guardrails/** @0x404ethsol

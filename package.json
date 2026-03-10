@@ -1,0 +1,37 @@
+{
+  "name": "gengaos",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GengaOS web-first anime production IDE",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "services/api-gateway-worker",
+    "services/sync-worker"
+  ],
+  "scripts": {
+    "dev": "python tools/dev/boot.py",
+    "dev:smoke": "python tools/dev/boot.py --smoke",
+    "dev:control": "python -m uvicorn app.main:app --host 127.0.0.1 --port 8001 --reload --app-dir services/control-api",
+    "dev:inference": "python -m uvicorn app.main:app --host 127.0.0.1 --port 8002 --reload --app-dir services/inference-api",
+    "dev:web": "npm run dev --workspace @genga/web-studio -- --host 127.0.0.1 --port 5173",
+    "smoke": "python tools/dev/smoke.py",
+    "doctor": "python tools/dev/doctor.py",
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "npm run test:unit:js && npm run test:unit:py",
+    "test:unit:js": "npm run test --workspace @genga/contracts && npm run test --workspace @genga/graph-core && npm run test --workspace @genga/identity-lock-sdk && npm run test --workspace @genga/api-gateway-worker && npm run test --workspace @genga/sync-worker",
+    "test:unit:py": "pytest services/control-api/tests services/inference-api/tests",
+    "test:e2e": "npm run test:e2e --workspace @genga/web-studio",
+    "lint": "npm run lint --workspaces --if-present",
+    "guardrails:check": "node tools/guardrails/check-command.mjs",
+    "guardrails:assert": "node tools/guardrails/assert-safe-branch.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

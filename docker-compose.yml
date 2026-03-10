@@ -1,0 +1,23 @@
+services:
+  control-api:
+    build:
+      context: ./services/control-api
+    ports:
+      - "8001:8001"
+
+  inference-api:
+    build:
+      context: ./services/inference-api
+    ports:
+      - "8002:8002"
+
+  web-studio:
+    image: node:20
+    working_dir: /app
+    command: sh -c "npm install && npm run dev --workspace @genga/web-studio -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./:/app
+    depends_on:
+      - control-api

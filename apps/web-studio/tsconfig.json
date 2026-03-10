@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"],
+      "@genga/contracts": ["../../../packages/contracts/src/index.ts"],
+      "@genga/graph-core": ["../../../packages/graph-core/src/index.ts"]
+    },
+    "jsx": "react-jsx",
+    "types": ["vite/client"],
+    "noEmit": true
+  },
+  "include": ["src"]
+}

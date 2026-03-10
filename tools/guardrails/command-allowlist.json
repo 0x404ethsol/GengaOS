@@ -1,0 +1,28 @@
+{
+  "allowedPrefixes": [
+    "npm run",
+    "npm install",
+    "npm ci",
+    "npx vite",
+    "pytest",
+    "uvicorn",
+    "python -m",
+    "wrangler deploy",
+    "wrangler dev",
+    "git status",
+    "git diff",
+    "git checkout -b",
+    "git switch -c",
+    "git add",
+    "git commit",
+    "git push"
+  ],
+  "blockedPatterns": [
+    "git reset --hard",
+    "git push --force",
+    "rm -rf /",
+    "DROP DATABASE",
+    "DROP SCHEMA",
+    "del /f /s /q"
+  ]
+}

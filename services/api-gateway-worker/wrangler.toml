@@ -1,0 +1,7 @@
+name = "genga-api-gateway"
+main = "src/index.ts"
+compatibility_date = "2026-02-12"
+
+[vars]
+CONTROL_API_BASE = "https://control-api.gengaos.dev"
+CONTROL_API_INTERNAL_TOKEN = "set-in-cloudflare-secret"

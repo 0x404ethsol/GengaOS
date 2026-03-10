@@ -1,0 +1,20 @@
+# Runpod Target Configuration
+
+provider: runpod
+mode: pods
+
+images:
+  - name: gengaos-inference
+    dockerfile: ../../services/inference-api/Dockerfile
+
+policies:
+  daily_credit_cap: 300
+  kill_switch_on_cap: true
+  retry:
+    attempts: 2
+    backoff_seconds: 5
+
+control_plane:
+  control_api_base: https://control-api.gengaos.dev
+  inference_api_base: https://inference-api.gengaos.dev
+  auth_header: x-genga-inference-token

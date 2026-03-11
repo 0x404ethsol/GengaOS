@@ -82,6 +82,7 @@ from .store import (
     store,
 )
 from .voice_engine import voice_engine
+from . import gemini_client
 
 app = FastAPI(title="GengaOS Control API", version="0.1.0")
 
@@ -118,8 +119,23 @@ async def enforce_gateway_auth(request, call_next):
 
 
 @app.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok", "service": "control-api", "domain": "anime-ide"}
+def health() -> dict:
+    return {
+        "status": "ok",
+        "service": "control-api",
+        "domain": "anime-ide",
+        "ai": gemini_client.gemini_status(),
+    }
+
+
+@app.get("/v1/ai/status")
+def ai_status() -> dict:
+    """Returns AI provider status for the Marketplace UI."""
+    status = gemini_client.gemini_status()
+    return {
+        "gemini": status,
+        "providers": [{"id": "gemini", **status}],
+    }
 
 
 @app.post("/v1/sync/room-token", response_model=RoomTokenResponse)
@@ -210,6 +226,28 @@ def get_pose_preset(pose_id: str) -> dict:
 
 @app.get("/v1/anime/scene-ideas")
 def anime_scene_ideas(q: str = Query("", min_length=0), limit: int = Query(24, ge=1, le=100)) -> dict:
+    # Try Gemini first
+    ai_ideas = gemini_client.generate_scene_ideas(q, count=min(limit, 8))
+    if ai_ideas:
+        # Normalise AI output to match SceneIdea schema
+        ideas = []
+        for i, raw in enumerate(ai_ideas, start=1):
+            ideas.append({
+                "id": raw.get("id", f"gemini-idea-{i}"),
+                "title": raw.get("title", "Untitled Scene"),
+                "theme": raw.get("theme", q or "anime"),
+                "mood": raw.get("mood", "cinematic"),
+                "promptSeed": raw.get("promptSeed", raw.get("title", "")),
+                "tags": raw.get("tags", ["gemini", "ai-generated"]),
+                "shotType": raw.get("shotType", "medium-shot"),
+                "emotionalCore": raw.get("emotionalCore", ""),
+                "confidence": round(0.82 + (i % 4) * 0.04, 2),
+                "source": "gemini-2.0-flash",
+            })
+        store.add_audit("scene_ideas.gemini", "ai", {"query": q, "count": len(ideas)})
+        return {"ideas": ideas, "source": "gemini"}
+
+    # Fallback: static store
     query = q.strip().lower()
     ranked = []
     for idea in ANIME_SCENE_IDEAS:
@@ -433,6 +471,19 @@ def analyze_episode_board(project_id: str) -> CriticalPathResponse:
 @app.post("/v1/notes/parse", response_model=DirectorNoteParseResponse)
 def parse_director_notes(payload: DirectorNoteParseRequest) -> DirectorNoteParseResponse:
     text = payload.text.strip()
+
+    # Try Gemini AI parser first
+    ai_actions = gemini_client.parse_director_notes(text, payload.projectId)
+    if ai_actions:
+        response = DirectorNoteParseResponse(actions=ai_actions)
+        store.add_audit(
+            "director_notes.parsed",
+            "gemini-ai",
+            {"projectId": payload.projectId, "actions": len(ai_actions), "source": "gemini"},
+        )
+        return response
+
+    # Fallback: regex-based parser
     lowered = text.lower()
     actions = []
 
@@ -1575,6 +1626,13 @@ def get_job(job_id: str) -> dict:
 
 @app.post("/v1/autopilot/suggest-shot")
 def suggest_shot(payload: AutopilotSuggestRequest) -> dict:
+    # Try Gemini AI shot suggester first
+    ai_suggestions = gemini_client.suggest_shots(payload.scriptBeat)
+    if ai_suggestions:
+        store.add_audit("autopilot.suggest", "gemini-ai", {"scriptBeat": payload.scriptBeat})
+        return {"suggestions": ai_suggestions, "source": "gemini-2.0-flash"}
+
+    # Fallback: static templates
     suggestions = [
         {
             "templateId": template.id,
@@ -1583,10 +1641,10 @@ def suggest_shot(payload: AutopilotSuggestRequest) -> dict:
             "estimatedCostCredits": template.estimatedCredits,
             "estimatedSeconds": int(template.estimatedCredits * 3),
         }
-        for template in ANIME_SHOT_TEMPLATES[:2]
+        for template in ANIME_SHOT_TEMPLATES[:3]
     ]
     store.add_audit("autopilot.suggest", "director", {"scriptBeat": payload.scriptBeat})
-    return {"suggestions": suggestions}
+    return {"suggestions": suggestions, "source": "static"}
 
 
 @app.post("/v1/autopilot/retake-plan")

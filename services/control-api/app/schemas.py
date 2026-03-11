@@ -157,6 +157,12 @@ class AddExpressionKeyRequest(BaseModel):
     expression: str = "neutral"
 
 
+class VoiceGenerateRequest(BaseModel):
+    projectId: str
+    audioSrc: str
+    mood: str = "neutral"
+
+
 class PosePreset(BaseModel):
     poseId: str
     name: str

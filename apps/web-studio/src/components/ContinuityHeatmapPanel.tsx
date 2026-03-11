@@ -16,7 +16,7 @@ export function ContinuityHeatmapPanel({ onStatus }: ContinuityHeatmapPanelProps
   const [actorLockId, setActorLockId] = useState("");
   const [frameA, setFrameA] = useState("");
   const [frameB, setFrameB] = useState("");
-  const [tags, setTags] = useState("pose-drift,prop-drift");
+  const [tags, setTags] = useState("pose-drift,prop-drift,spatial-axis");
   const [overall, setOverall] = useState<number | null>(null);
   const [issues, setIssues] = useState<ContinuityIssue[]>([]);
   const [retakePlan, setRetakePlan] = useState("");
@@ -34,7 +34,10 @@ export function ContinuityHeatmapPanel({ onStatus }: ContinuityHeatmapPanelProps
         tags: tags
           .split(",")
           .map((tag) => tag.trim())
-          .filter(Boolean)
+          .filter(Boolean),
+        framing_a: "medium-shot-left",
+        framing_b: "close-up-right",
+        motion_vector: tags.includes("spatial-axis") ? "flip" : "pan"
       }
     });
     setOverall(response.overallScore ?? null);

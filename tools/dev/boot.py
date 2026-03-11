@@ -1,4 +1,4 @@
-﻿import argparse
+import argparse
 import json
 import os
 import subprocess
@@ -161,7 +161,7 @@ def build_services() -> list[Service]:
         Service(
             name="control-api",
             command=[
-                sys.executable,
+                str(ROOT / "services" / "control-api" / ".venv" / "bin" / "python") if (ROOT / "services" / "control-api" / ".venv").exists() else sys.executable,
                 "-m",
                 "uvicorn",
                 "app.main:app",
@@ -177,7 +177,7 @@ def build_services() -> list[Service]:
         Service(
             name="inference-api",
             command=[
-                sys.executable,
+                str(ROOT / "services" / "inference-api" / ".venv" / "bin" / "python") if (ROOT / "services" / "inference-api" / ".venv").exists() else sys.executable,
                 "-m",
                 "uvicorn",
                 "app.main:app",

@@ -21,6 +21,7 @@ import { StartupGuide } from "./components/StartupGuide";
 import { StudioCanvas } from "./components/StudioCanvas";
 import { StyleDnaPanel } from "./components/StyleDnaPanel";
 import { VideoEditorPanel } from "./components/VideoEditorPanel";
+import { VoiceBridgePanel } from "./components/VoiceBridgePanel";
 import { createStudioCommands } from "./lib/commands";
 import { playCinematicCue } from "./lib/cues";
 
@@ -251,6 +252,7 @@ function App() {
             approvalStatus={approvalStatus}
             onStatus={setStatus}
           />
+          <VoiceBridgePanel projectId={projectId} onStatus={setStatus} />
           <RedlineApprovalPanel
             projectId={projectId}
             shotId={activeShotId}

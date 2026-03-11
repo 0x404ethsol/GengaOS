@@ -70,6 +70,7 @@ from .schemas import (
     VariantTelemetryCreateRequest,
     VariantTelemetryRecord,
     AutopilotSuggestRequest,
+    VoiceGenerateRequest,
 )
 from .security import create_actor_lock, create_room_token, is_lock_valid
 from .store import (
@@ -80,6 +81,7 @@ from .store import (
     DEFAULT_EXTENSIONS,
     store,
 )
+from .voice_engine import voice_engine
 
 app = FastAPI(title="GengaOS Control API", version="0.1.0")
 
@@ -333,6 +335,17 @@ def remix_inspiration(payload: InspirationRemixRequest) -> dict:
         {"projectId": payload.projectId, "ideaId": payload.ideaId, "targetNodeId": payload.targetNodeId},
     )
     return {"ideaId": payload.ideaId, "nodePrefill": node_prefill, "message": "Remix payload ready for graph hydration."}
+
+
+@app.post("/v1/voice/generate-expression-takes", response_model=ExpressionTake)
+def generate_expression_takes(payload: VoiceGenerateRequest) -> ExpressionTake:
+    take = voice_engine.process_audio_to_phonemes(payload.audioSrc, payload.mood)
+    store.add_audit(
+        "voice.takes_generated",
+        "system",
+        {"projectId": payload.projectId, "audioSrc": payload.audioSrc, "takeId": take.takeId},
+    )
+    return take
 
 
 def _default_episode_board(project_id: str) -> EpisodeBoard:
@@ -1085,16 +1098,31 @@ def _continuity_scan(payload: ContinuityScanRequest) -> ContinuityScanResponse:
     else:
         scores.append(0.84)
 
-    if "axis-break" in tags:
-        issues.append(
-            {
-                "category": "camera-axis",
-                "severity": "warning",
-                "score": 0.47,
-                "detail": "Potential 180-degree axis break detected.",
-            }
-        )
-        scores.append(0.47)
+    if "axis-break" in tags or "spatial-axis" in tags:
+        # Simulate check: if 'framing' in context differs by 'flip', trigger axis break
+        framing_a = payload.context.get("framing_a", "medium-shot")
+        framing_b = payload.context.get("framing_b", "medium-shot")
+        
+        if "flip" in payload.context.get("motion_vector", ""):
+            issues.append(
+                {
+                    "category": "camera-axis",
+                    "severity": "critical",
+                    "score": 0.28,
+                    "detail": "Action axis violated (180-degree rule failure). Scene topology is inconsistent.",
+                }
+            )
+            scores.append(0.28)
+        else:
+            issues.append(
+                {
+                    "category": "camera-axis",
+                    "severity": "info",
+                    "score": 0.92,
+                    "detail": "Spatial axis maintained. Action vectors are consistent.",
+                }
+            )
+            scores.append(0.92)
     else:
         scores.append(0.88)
 

@@ -26,11 +26,13 @@ import { DirectorGhostPanel } from "./components/DirectorGhostPanel";
 import { StyleCompassHUD } from "./components/StyleCompassHUD";
 import { SakugaFlowPanel } from "./components/SakugaFlowPanel";
 import { EasyModeWizard } from "./components/EasyModeWizard";
+import { ToolsMarketplace } from "./components/ToolsMarketplace";
 import { createStudioCommands } from "./lib/commands";
 import { playCinematicCue } from "./lib/cues";
 
 function App() {
   const [easyMode, setEasyMode] = useState(false);
+  const [activeTab, setActiveTab] = useState<"studio" | "marketplace">("studio");
   const [projectId] = useState("demo-project");
   const [status, setStatus] = useState("Anime studio ready");
   const [activeIdea, setActiveIdea] = useState<SceneIdea | null>(null);
@@ -205,6 +207,20 @@ function App() {
         <div className="header-center">
           <StyleCompassHUD projectId={projectId} styleDnaId={activeStyleDnaId} />
         </div>
+        <div className="header-tabs">
+          <button
+            className={`header-tab ${activeTab === "studio" ? "active" : ""}`}
+            onClick={() => setActiveTab("studio")}
+          >
+            🎥 Director Studio
+          </button>
+          <button
+            className={`header-tab ${activeTab === "marketplace" ? "active" : ""}`}
+            onClick={() => setActiveTab("marketplace")}
+          >
+            🧩 Tools Marketplace
+          </button>
+        </div>
         <div className="header-pills">
           <span className="pill pill-version">Studio v2</span>
           <span className="pill pill-status">● {getAnimeSectionLabel("cast")} Active</span>
@@ -221,6 +237,11 @@ function App() {
         </div>
       </header>
 
+      {activeTab === "marketplace" ? (
+        <div className="marketplace-view">
+          <ToolsMarketplace onStatus={setStatus} />
+        </div>
+      ) : (
       <div className="workspace-grid">
         <aside className="sidebar left-rail">
           <DirectorGhostPanel projectId={projectId} onStatus={setStatus} />
@@ -284,6 +305,7 @@ function App() {
           <ColorScriptLanePanel projectId={projectId} onStatus={setStatus} />
         </aside>
       </div>
+      )}
       <CommandPalette
         open={paletteOpen}
         commands={commands}

@@ -25,10 +25,12 @@ import { VoiceBridgePanel } from "./components/VoiceBridgePanel";
 import { DirectorGhostPanel } from "./components/DirectorGhostPanel";
 import { StyleCompassHUD } from "./components/StyleCompassHUD";
 import { SakugaFlowPanel } from "./components/SakugaFlowPanel";
+import { EasyModeWizard } from "./components/EasyModeWizard";
 import { createStudioCommands } from "./lib/commands";
 import { playCinematicCue } from "./lib/cues";
 
 function App() {
+  const [easyMode, setEasyMode] = useState(false);
   const [projectId] = useState("demo-project");
   const [status, setStatus] = useState("Anime studio ready");
   const [activeIdea, setActiveIdea] = useState<SceneIdea | null>(null);
@@ -206,6 +208,13 @@ function App() {
         <div className="header-pills">
           <span className="pill pill-version">Studio v2</span>
           <span className="pill pill-status">● {getAnimeSectionLabel("cast")} Active</span>
+          <button
+            type="button"
+            className={`easy-mode-toggle-btn ${easyMode ? "active" : ""}`}
+            onClick={() => setEasyMode(m => !m)}
+          >
+            {easyMode ? "⚙ Director Mode" : "✦ Easy Mode"}
+          </button>
           <button type="button" className="command-btn" onClick={() => setPaletteOpen(true)}>
             ⌘K Command Palette
           </button>
@@ -282,6 +291,12 @@ function App() {
         onUndoLast={undoLastCommand}
         onClose={() => setPaletteOpen(false)}
       />
+      {easyMode && (
+        <EasyModeWizard
+          onExitEasyMode={() => setEasyMode(false)}
+          onStatus={setStatus}
+        />
+      )}
       <footer className="status-bar">
         <div className="status-bar-left">
           <span className="status-dot" />

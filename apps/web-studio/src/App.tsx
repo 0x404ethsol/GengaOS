@@ -22,6 +22,9 @@ import { StudioCanvas } from "./components/StudioCanvas";
 import { StyleDnaPanel } from "./components/StyleDnaPanel";
 import { VideoEditorPanel } from "./components/VideoEditorPanel";
 import { VoiceBridgePanel } from "./components/VoiceBridgePanel";
+import { DirectorGhostPanel } from "./components/DirectorGhostPanel";
+import { StyleCompassHUD } from "./components/StyleCompassHUD";
+import { SakugaFlowPanel } from "./components/SakugaFlowPanel";
 import { createStudioCommands } from "./lib/commands";
 import { playCinematicCue } from "./lib/cues";
 
@@ -190,22 +193,28 @@ function App() {
         }
       />
       <header className="app-header">
-        <div>
-          <h1>GengaOS Anime IDE</h1>
-          <p className="muted">{animeTerminology.mantra} Specialized anime direction from script to final cut.</p>
+        <div className="header-brand">
+          <div className="brand-mark">GOS</div>
+          <div>
+            <h1>GengaOS</h1>
+            <p className="muted header-tagline">{animeTerminology.mantra}</p>
+          </div>
+        </div>
+        <div className="header-center">
+          <StyleCompassHUD projectId={projectId} styleDnaId={activeStyleDnaId} />
         </div>
         <div className="header-pills">
-          <span className="pill">Web Studio v1</span>
-          <span className="pill">{getAnimeSectionLabel("cast")} Ready</span>
-          <span className="pill">{getAnimeSectionLabel("block")} to {getAnimeSectionLabel("deliver")}</span>
-          <button type="button" className="ghost-button" onClick={() => setPaletteOpen(true)}>
-            Command Palette (Ctrl/Cmd+K)
+          <span className="pill pill-version">Studio v2</span>
+          <span className="pill pill-status">● {getAnimeSectionLabel("cast")} Active</span>
+          <button type="button" className="command-btn" onClick={() => setPaletteOpen(true)}>
+            ⌘K Command Palette
           </button>
         </div>
       </header>
 
       <div className="workspace-grid">
         <aside className="sidebar left-rail">
+          <DirectorGhostPanel projectId={projectId} onStatus={setStatus} />
           <StartupGuide onStart={onStartup} />
           <AutopilotPanel projectId={projectId} activeStyleDnaId={activeStyleDnaId} onTemplate={onTemplate} />
           <StyleDnaPanel projectId={projectId} onStyleLockChange={setActiveStyleDnaId} onStatus={setStatus} />
@@ -252,6 +261,7 @@ function App() {
             approvalStatus={approvalStatus}
             onStatus={setStatus}
           />
+          <SakugaFlowPanel projectId={projectId} onStatus={setStatus} />
           <VoiceBridgePanel projectId={projectId} onStatus={setStatus} />
           <RedlineApprovalPanel
             projectId={projectId}
@@ -272,6 +282,19 @@ function App() {
         onUndoLast={undoLastCommand}
         onClose={() => setPaletteOpen(false)}
       />
+      <footer className="status-bar">
+        <div className="status-bar-left">
+          <span className="status-dot" />
+          <span className="status-project">◈ {projectId}</span>
+          <span className="status-divider">│</span>
+          <span className="status-text">{status}</span>
+        </div>
+        <div className="status-bar-right">
+          <span className="status-chip">control-api: healthy</span>
+          <span className="status-chip">inference-api: healthy</span>
+          <span className="status-chip">GengaOS v2</span>
+        </div>
+      </footer>
     </div>
   );
 }

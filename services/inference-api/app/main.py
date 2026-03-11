@@ -10,14 +10,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from fastapi.responses import JSONResponse
 
+from . import fal_client
+
 
 class InferenceRequest(BaseModel):
     actorLockId: str
     frameA: str | None = None
     frameB: str | None = None
     sketchHint: str | None = None
-    provider: str = "runpod"
+    prompt: str | None = None
+    provider: str = "auto"   # "auto" picks fal if key present, else mock
     frameCount: int = 24
+    width: int = 1024
+    height: int = 576
 
 
 class InferenceSettings(BaseModel):
@@ -40,7 +45,7 @@ class SpendLedger:
 settings = InferenceSettings()
 ledger = SpendLedger()
 
-app = FastAPI(title="GengaOS Inference API", version="0.1.0")
+app = FastAPI(title="GengaOS Inference API", version="0.2.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -73,6 +78,18 @@ def _cost(job_type: str, frame_count: int) -> float:
     return round(max(1, frame_count) * base, 2)
 
 
+def _resolve_provider(requested: str) -> str:
+    """Pick the best available provider."""
+    if requested in ("fal", "fal.ai"):
+        return "fal"
+    if requested == "mock":
+        return "mock"
+    # auto: prefer fal if key available
+    if fal_client.is_available():
+        return "fal"
+    return "mock"
+
+
 def _dispatch(job_type: str, payload: InferenceRequest) -> dict:
     credits = _cost(job_type, payload.frameCount)
     if ledger.today() + credits > settings.daily_cap_credits:
@@ -84,34 +101,86 @@ def _dispatch(job_type: str, payload: InferenceRequest) -> dict:
             "outputs": [],
         }
 
+    provider = _resolve_provider(payload.provider)
+    job_id = f"job_{uuid4().hex[:12]}"
+    prompt = payload.prompt or payload.sketchHint or "anime scene"
+
+    # ── REAL FAL.AI GENERATION ────────────────────────────────
+    if provider == "fal":
+        if job_type == "keyframes":
+            result = fal_client.generate_keyframes(
+                prompt=prompt,
+                actor_lock_id=payload.actorLockId,
+                frame_count=min(payload.frameCount, 4),
+                sketch_hint=payload.sketchHint or "",
+                width=payload.width,
+                height=payload.height,
+            )
+        else:  # interpolate
+            result = fal_client.interpolate_frames(
+                prompt=prompt,
+                frame_a_url=payload.frameA or "",
+                frame_b_url=payload.frameB or "",
+                actor_lock_id=payload.actorLockId,
+                frame_count=payload.frameCount,
+            )
+
+        ledger.add(credits)
+        return {
+            "jobId": job_id,
+            "status": result.get("status", "completed"),
+            "provider": "fal",
+            "model": result.get("model", ""),
+            "estimatedCredits": credits,
+            "outputs": result.get("outputs", []),
+            "error": result.get("error"),
+        }
+
+    # ── MOCK (no keys configured) ─────────────────────────────
     ledger.add(credits)
     return {
-        "jobId": f"job_{uuid4().hex[:12]}",
+        "jobId": job_id,
         "status": "completed",
-        "provider": payload.provider,
+        "provider": "mock",
         "estimatedCredits": credits,
         "outputs": [
-            f"https://runpod.cdn.gengaos.dev/{job_type}/{uuid4().hex[:8]}/000.png",
-            f"https://runpod.cdn.gengaos.dev/{job_type}/{uuid4().hex[:8]}/001.png",
+            f"https://placehold.co/{payload.width}x{payload.height}/1a1a2e/7c3aed?text=Frame+A",
+            f"https://placehold.co/{payload.width}x{payload.height}/1a1a2e/7c3aed?text=Frame+B",
         ],
+        "_note": "Mock output — add FAL_KEY to .env for real generation",
     }
 
 
 @app.get("/health")
 def health() -> dict:
-    return {"status": "ok", "service": "inference-api", "provider": "runpod"}
+    return {
+        "status": "ok",
+        "service": "inference-api",
+        "fal": fal_client.fal_status(),
+    }
 
 
 @app.get("/v1/providers")
 def providers() -> dict:
+    fal_ok = fal_client.is_available()
     return {
         "providers": [
             {
-                "id": "runpod",
+                "id": "fal",
+                "name": "fal.ai",
+                "status": "active" if fal_ok else "unconfigured",
+                "models": ["fast-sdxl", "cogvideox-5b"],
+                "keyConfigured": fal_ok,
+            },
+            {
+                "id": "mock",
+                "name": "Mock (placeholder)",
                 "status": "active",
-                "notes": "Primary demo provider",
-            }
-        ]
+                "models": ["mock"],
+                "keyConfigured": True,
+            },
+        ],
+        "active": "fal" if fal_ok else "mock",
     }
 
 

@@ -28,7 +28,7 @@ GengaOS is an open-source, node-based workspace that brutally enforces tradition
 
 Built on a massive **React Flow** architectural canvas and backed by a **Rust/Tauri** native backend, GengaOS acts as a visual orchestration engine. It forces the AI to yield absolute creative control back to the human artist sitting in the director's chair.
 
-### Why You Will FOMO If You Only Use standard Web-UI's:
+### The Architectural Difference: Visual Orchestration vs. Text Prompts
 If you are generating videos via standard browser AI tools, you are losing out on the mathematical control that GengaOS explicitly hardwires into your pipeline:
 
 #### 1. Absolute Character Locking (The Settei Node)

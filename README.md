@@ -1,94 +1,104 @@
 <div align="center">
-  <img src="https://images.unsplash.com/photo-1541562232579-512a21360020?q=80&w=800&auto=format&fit=crop" width="100%" style="border-radius: 12px; margin-bottom: 20px;" alt="GengaOS Cover Image" />
+  <img src="./docs/GengaOS_Logo.jpg" width="60%" style="border-radius: 12px; margin-bottom: 20px;" alt="GengaOS The Director-First Anime Workspace" />
   
   <h1>GengaOS</h1>
   <p><b>The "Director-First" Generative Anime Operating System</b></p>
   
   <p>
-    <a href="#about">About</a> • 
-    <a href="#core-features">Features</a> • 
-    <a href="#installation">Installation</a> • 
-    <a href="#philosophy">Philosophy</a>
+    <a href="#the-problem">The Problem</a> • 
+    <a href="#the-gengaos-architecture">The Architecture</a> • 
+    <a href="#the-technology-stack">Tech Stack</a> • 
+    <a href="#installation">Installation</a>
   </p>
 </div>
 
 ---
 
-## 🎬 About GengaOS
+## 🛑 The Problem: The AI "Slot Machine"
+Right now, the AI Video and Animation space is broken. If you are an Indie Anime Director trying to produce a 24-minute cinematic episode, you quickly realize that typing *"Action sword fight scene, hyper-detailed"* into a Discord bot or a web wrapper is fundamentally useless for production. 
 
-**Stop gambling with AI slot machines. Start directing.**
+You cannot direct an anime by pulling the lever on a random visual slot machine. You get flickering characters, terrible pacing, zero continuity, and an inability to hit specific script timing.
 
-GengaOS is an open-source, node-based workspace designed exclusively for solo indie anime directors. Built on top of React Flow and Tauri, it acts as a massive orchestration engine that allows you to chain together absolute control over Character IP-Adapters, Video-to-Video Kinematics, 2.5D Multiplane Parallax, and Audio/Lip-Sync logic into a unified "Studio Canvas". 
-
-This is not a toy wrapper for ChatGPT. It is a terrifyingly accurate digital replica of a high-end Tokyo Animation Studio, condensed into a single visual programming canvas.
+A real anime studio doesn't use "prompts". They use **Settei** (Character Model Sheets), **Ekonte** (Storyboards), **Sakuga** (Keyframe Kinetics), and **Dope Sheets** (Timing ledgers).
 
 ---
 
-## ⚙️ The AAA Anime Studio Pipeline (Core Features)
+## 🎬 The Solution: GengaOS
+GengaOS is an open-source, node-based workspace that brutally enforces traditional animation constraints onto chaotic Machine Learning models. 
 
-### 1. Absolute Character Locking (Settei Node)
-No more flickering characters. GengaOS requires you to define a "Settei" (Character Model Sheet). It dynamically locks this character's visual identity across every single shot using Advanced IP-Adapter weight routing.
+Built on a massive **React Flow** architectural canvas and backed by a **Rust/Tauri** native backend, GengaOS acts as a visual orchestration engine. It forces the AI to yield absolute creative control back to the human artist sitting in the director's chair.
 
-### 2. Sakuga V2V Kinematics Extraction
-Don't let the AI guess how gravity works. The Sakuga Engine allows you to drop a raw `.mp4` video of live-action fight choreography. GengaOS utilizes **DWPose** to extract the highly complex martial arts skeleton, and renders your Settei character performing the exact kinetic motion flawlessly.
+### Why You Will FOMO If You Only Use standard Web-UI's:
+If you are generating videos via standard browser AI tools, you are losing out on the mathematical control that GengaOS explicitly hardwires into your pipeline:
 
-### 3. The Multiplane Depth Parallax
-Take your flat AI generations and breathe life into them. The Multiplane Node runs **Depth-Anything-V2** over the image, physically slicing it into separated Foreground, Midground (Actor), and Background layers. You can then inject custom Deforum camera panning paths inside a simulated 3D space.
+#### 1. Absolute Character Locking (The Settei Node)
+*   **The Problem:** Your protagonist's jacket changes shape, color, and design every single frame. 
+*   **The OS Fix:** Before you generate a single frame, GengaOS forces you to connect a **Settei Node**. This takes your character's foundational turn-around sheet and aggressively hooks it into an **IP-Adapter FaceID/Plus** pipeline. The AI is no longer "guessing" who the character is—it is mathematically forced to lock their visual identity across every shot in the ecosystem.
 
-### 4. Audio "Dope Sheet" & Wav2Lip Synchronization
-An anime falls apart without voice acting. The Timeline node acts as a traditional Japanese "X-Sheet", mapping your audio waveform directly beneath your animation frames. We automatically map phonetic visemes to force your character's mouth flaps to match the dialogue perfectly.
+#### 2. True Sakuga Extraction (Video-to-Video Kinematics)
+*   **The Problem:** AI Text-to-Video generators produce floaty, blurry, and physically inaccurate martial arts fights. 
+*   **The OS Fix:** GengaOS features a dedicated **Sakuga Action Engine**. You drop a raw `.mp4` of real live-action fight choreography into the Node. GengaOS runs **DWPose (DensePose)** over every frame, stripping away the video but keeping the pure kinetic OpenPose skeleton. It feeds this skeleton, along with your *Settei Node*, into **AnimateDiff + ControlNet**, physically tracing the hyper-kinetic momentum of a real stunt sequence onto your Anime character.
 
-### 5. Independent Compute Freedom (BYOK / Local)
-GengaOS permanently solves the problem of platform lock-in. Inside the UI, the **Hardware Compute Core** allows you to explicitly route your entire graph:
-*   **Without a Gaming PC:** Route to Cloud API Endpoints (OpenAI, Fal.ai Serverless) using only a few pennies of API credits.
-*   **With a Gaming PC:** Route text to **Ollama (Port 11434)** and images to an invisible, headless **ComfyUI (Port 8188)** instance running on your bare metal. Infinite, offline, free anime generation.
+#### 3. 2.5D Multiplane Parallax Separation
+*   **The Problem:** AI video looks flat. There is no cinematic depth or dynamic camera shifting.
+*   **The OS Fix:** The GengaOS **Multiplane Node** takes your "flat" generation and runs it through a local **Depth-Anything-V2** model. It physically slices the image into completely separated Foreground (FX/Smoke), Midground (Actor), and Background (Scenery) image layers. You can then map **Deforum** camera sweeps across these separated planes, producing mind-blowing cinematic parallax that feels like an Ufotable production.
+
+#### 4. The Sync-Locked Dope Sheet (Audio-Visual Linking)
+*   **The Problem:** Slapping dialogue onto a silent video afterward makes the lip-sync look amateur.
+*   **The OS Fix:** The OS includes a literal Japanese "X-Sheet" Timeline Node. It maps an immediate, visual SVG waveform underneath your frame sequencer. When you input an audio file from a Local TTS, the system extracts the specific phonetic Visemes (`A, E, I, O, U, M`) and mathematically links them to your visual frames, orchestrating flawless **Wav2Lip** syncing. 
+
+---
+
+## ⚙️ The Technology Stack & Philosophy
+
+We did not build another generic thin-client wrapper. GengaOS is a heavy-duty production environment. 
+
+### Frontend Orchestration (The Studio)
+*   **React Flow & Vite:** The entire canvas is a heavily customized Directed Acyclic Graph (DAG). Every node has its own isolated state management, allowing massive, sprawling episodic workflows on a single panning 2D screen. 
+*   **React-Three-Fiber (R3F):** (Coming Soon) We embed physical 3D WebGL WebXR instances directly inside the nodes, allowing directors to physically block out "dummy mannequins" before rendering.
+
+### Backend Routing (Absolute Hardware Freedom)
+*   **Tauri v2 (Rust):** The React frontend is compiled into a lightweight native `.dmg` / `.exe` using Rust. It runs identically to a native Mac/Windows app, with extreme performance.
+*   **Python Fast-API Sidecar:** The Tauri shell invisibly boots a local Python API in the background. 
+
+### Why the BYOK (Bring Your Own Key) Router is Essential
+We despise platform lock-in. **GengaOS does not charge you a subscription fee.**
+
+Inside the UI, the **Hardware Compute Core** allows you to explicitly route your entire graph:
+1.  **For users without a massive Gaming PC:** You select `Cloud: Fal.ai` or `OpenAI`. You plug in your raw API keys securely (stored locally via Rust, never in the browser). You pay fractions of a penny per shot with massive generation speed.
+2.  **For users with an RTX 4090 / M3 Max:** You select `Local: ComfyUI (Port 8188)` and `Local: Ollama (Port 11434)`. GengaOS will serialize the stunning Node Graph you built and automatically translate it into **ComfyUI JSON Workflows**, pumping it directly into your local machine's GPU pipeline. You generate unlimited AAA anime locally, completely offline, for absolutely free. 
 
 ---
 
 ## 🚀 Getting Started
 
-*Note: GengaOS is currently completing Phase 5 of its UI architecture. The upcoming 1-Click Installer (Tauri `.exe`) is in active development.*
+*Note: The official 1-Click Installer `.dmg` is currently undergoing compilation audits for the public release.*
 
-### Developer Setup (Web Studio Mode)
+### Developer Setup (Studio Mode)
 
-If you want to run the React Studio canvas locally:
+If you are a Node.js / Python developer and want to run the React Studio canvas locally right now:
 
 ```bash
-# Clone the repository
+# 1. Clone the repository
 git clone https://github.com/0x404ethsol/GengaOS.git
-cd GengaOS
+cd GengaOS/apps/web-studio
 
-# Move into the frontend application
-cd apps/web-studio
-
-# Install dependencies
+# 2. Install Dependencies
 npm install
 
-# Run the React Flow UI Canvas
+# 3. Boot the React Flow UI Canvas
 npm run dev
 ```
 
-### Starting the Python Sidecar
-The UI will attempt to serialize the DAG (Directed Acyclic Graph) of your animation and send it to the local Python Sidecar to translate into Machine Learning API requests.
+### Starting the Python Intelligence Sidecar
+To ensure the graph connects and serializes properly, boot the internal API sidecar:
 
 ```bash
-# Inside a second terminal window
+# In a second terminal window
 cd apps/web-studio/src-tauri/bin/
-
-# Start the Sidecar API (Requires Python 3.10+)
 pip install fastapi uvicorn pydantic httpx
 python sidecar.py
 ```
-*The Sidecar will boot on `http://127.0.0.1:8000/` and begin accepting structural payloads from the UI.*
 
 ---
-
-## ⚔️ The Philosophy: Visual Nodes > Chatbots
-You cannot direct a 24-minute cinematic episode of high-intensity anime by typing text into a chatbot window. 
-
-A human director needs to see the **Script**, alongside the **Storyboards** (Ekonte), underneath the **Voice Actor Audio Track**, locked to the **Character Design Spec** (Settei), wired directly into the **Post-Processing Compositor** (Nuke/AE). 
-
-GengaOS exposes the mathematical reality of these Machine Learning models through a node-based architecture, forcing the AI to yield absolute creative control to the human artist sitting in the director's chair.
-
----
-*Built by 0x404ethsol.*
+*Built from the ground up to save Indie Anime. Orchestrated by 0x404ethsol.*

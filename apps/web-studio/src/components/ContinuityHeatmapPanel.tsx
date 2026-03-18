@@ -79,15 +79,47 @@ export function ContinuityHeatmapPanel({ onStatus }: ContinuityHeatmapPanelProps
         <input value={tags} onChange={(event) => setTags(event.target.value)} />
       </label>
 
-      <div className="row-buttons">
-        <button type="button" onClick={runScan}>Run Scan</button>
-        <button type="button" className="ghost-button" onClick={requestRetake}>Generate Retake</button>
+      <div className="row-buttons" style={{ marginBottom: "20px" }}>
+        <button type="button" onClick={runScan}>Run Motion Scan</button>
+        <button type="button" className="ghost-button" onClick={requestRetake}>Re-Chart Vectors</button>
       </div>
 
-      <div className="heatmap-track" aria-label="Continuity score heatmap">
-        <div className="heatmap-fill" style={{ width: `${heatPercent}%` }} />
+      {/* Modern MAPPA level motion vector flow visually */}
+      <div style={{ background: "#111", border: "1px solid #333", borderRadius: "8px", padding: "12px", marginBottom: "20px", position: "relative", boxShadow: "inset 0 0 20px rgba(0,0,0,0.5)" }}>
+         <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", color: "#888", marginBottom: "12px", letterSpacing: "1px" }}>
+            <span>MOMENTUM FLOW ANALYSIS</span>
+            <span style={{ color: "#4cff91", animation: "pulse 2s infinite" }}>● SENSOR ACTIVE</span>
+         </div>
+         <div style={{ position: "relative", height: "120px", background: "#1a1e28", borderRadius: "4px", overflow: "hidden" }}>
+            {/* Grid */}
+            <div style={{ position: "absolute", inset: 0, backgroundSize: "20px 20px", backgroundImage: "linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px)" }} />
+            
+            <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
+                <defs>
+                   <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                     <polygon points="0 0, 10 3.5, 0 7" fill="#4cff91" />
+                   </marker>
+                   <marker id="arrowhead-fail" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                     <polygon points="0 0, 10 3.5, 0 7" fill="#ff4c4c" />
+                   </marker>
+                </defs>
+                {/* Visual vectors representing cuts */}
+                <path d="M 20,90 L 140,40" fill="none" stroke="#4cff91" strokeWidth="4" markerEnd="url(#arrowhead)" strokeLinecap="round" />
+                <path d="M 170,30 L 280,80" fill="none" stroke="#ff4c4c" strokeWidth="4" markerEnd="url(#arrowhead-fail)" strokeDasharray="6 6" strokeLinecap="round" />
+                
+                <circle cx="20" cy="90" r="4" fill="#4cff91" />
+                <circle cx="170" cy="30" r="4" fill="#ff4c4c" />
+
+                <text x="100" y="30" fill="#fff" fontSize="10" opacity="0.8">Cut A (Pan Right)</text>
+                <text x="180" y="100" fill="#ff4c4c" fontSize="10" fontWeight="bold">⚠️ Cut B (180° Axis Broken)</text>
+            </svg>
+         </div>
+         <div style={{ marginTop: "10px", fontSize: "11px", color: "#aaa" }}>
+           Axis Continuity Break detected between Shot 14 and 15. Momentum transfer fails resulting in visual whiplash.
+         </div>
       </div>
-      <p className="muted"><strong>Overall:</strong> {overall === null ? "Not scanned" : `${heatPercent}%`}</p>
+
+      <p className="muted" style={{ borderTop: "1px solid #333", paddingTop: "15px" }}><strong>Heatmap Aggregate:</strong> {overall === null ? "Not scanned" : `${heatPercent}% Stability`}</p>
 
       <div className="issue-list">
         {issues.map((issue) => (

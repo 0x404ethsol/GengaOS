@@ -23,31 +23,33 @@ except ImportError:
     _FAL_AVAILABLE = False
 
 
-def _get_key() -> str:
+def _get_key(api_key: str | None = None) -> str:
+    if api_key:
+        return api_key
     # fal.ai accepts both variable names
     return os.getenv("FAL_KEY", "").strip() or os.getenv("FAL_API_KEY", "").strip()
 
 
-def is_available() -> bool:
-    return _FAL_AVAILABLE and bool(_get_key())
+def is_available(api_key: str | None = None) -> bool:
+    return _FAL_AVAILABLE and bool(_get_key(api_key))
 
 
-def fal_status() -> dict:
+def fal_status(api_key: str | None = None) -> dict:
     return {
-        "available": is_available(),
-        "key_configured": bool(_get_key()),
+        "available": is_available(api_key),
+        "key_configured": bool(_get_key(api_key)),
         "sdk": "fal-client",
         "models": {
             "keyframes": "fal-ai/fast-sdxl",
             "interpolate": "fal-ai/cogvideox-5b",
             "consistency": "fal-ai/ip-adapter-face-id",
-        } if is_available() else {},
+        } if is_available(api_key) else {},
     }
 
 
-def _configure():
+def _configure(api_key: str | None = None):
     """Set FAL_KEY env var so the SDK picks it up."""
-    key = _get_key()
+    key = _get_key(api_key)
     if key:
         os.environ["FAL_KEY"] = key
 
@@ -76,12 +78,13 @@ def generate_keyframes(
     sketch_hint: str = "",
     width: int = 1024,
     height: int = 576,
+    api_key: str | None = None,
 ) -> dict:
     """Generate anime keyframes via fal-ai/fast-sdxl. Returns job result dict."""
-    if not is_available():
+    if not is_available(api_key):
         return {"status": "unavailable", "outputs": [], "provider": "fal"}
 
-    _configure()
+    _configure(api_key)
 
     full_prompt = f"{sketch_hint or prompt}{ANIME_STYLE_SUFFIX}"
     outputs = []
@@ -144,12 +147,13 @@ def interpolate_frames(
     frame_b_url: str,
     actor_lock_id: str,
     frame_count: int = 24,
+    api_key: str | None = None,
 ) -> dict:
     """Generate interpolated video between two frames via CogVideoX."""
-    if not is_available():
+    if not is_available(api_key):
         return {"status": "unavailable", "outputs": [], "provider": "fal"}
 
-    _configure()
+    _configure(api_key)
 
     # If no frame URLs provided, fall back to text-to-video
     if not frame_a_url and not frame_b_url:

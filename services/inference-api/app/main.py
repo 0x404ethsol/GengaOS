@@ -5,7 +5,7 @@ from datetime import datetime
 import os
 from uuid import uuid4
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from fastapi.responses import JSONResponse
@@ -90,7 +90,7 @@ def _resolve_provider(requested: str) -> str:
     return "mock"
 
 
-def _dispatch(job_type: str, payload: InferenceRequest) -> dict:
+def _dispatch(job_type: str, payload: InferenceRequest, api_key: str | None = None) -> dict:
     credits = _cost(job_type, payload.frameCount)
     if ledger.today() + credits > settings.daily_cap_credits:
         return {
@@ -115,6 +115,7 @@ def _dispatch(job_type: str, payload: InferenceRequest) -> dict:
                 sketch_hint=payload.sketchHint or "",
                 width=payload.width,
                 height=payload.height,
+                api_key=api_key,
             )
         else:  # interpolate
             result = fal_client.interpolate_frames(
@@ -123,6 +124,7 @@ def _dispatch(job_type: str, payload: InferenceRequest) -> dict:
                 frame_b_url=payload.frameB or "",
                 actor_lock_id=payload.actorLockId,
                 frame_count=payload.frameCount,
+                api_key=api_key,
             )
 
         ledger.add(credits)
@@ -152,17 +154,17 @@ def _dispatch(job_type: str, payload: InferenceRequest) -> dict:
 
 
 @app.get("/health")
-def health() -> dict:
+def health(request: Request) -> dict:
     return {
         "status": "ok",
         "service": "inference-api",
-        "fal": fal_client.fal_status(),
+        "fal": fal_client.fal_status(request.headers.get("x-fal-key")),
     }
 
 
 @app.get("/v1/providers")
-def providers() -> dict:
-    fal_ok = fal_client.is_available()
+def providers(request: Request) -> dict:
+    fal_ok = fal_client.is_available(request.headers.get("x-fal-key"))
     return {
         "providers": [
             {
@@ -185,14 +187,14 @@ def providers() -> dict:
 
 
 @app.post("/v1/infer/keyframes")
-def infer_keyframes(payload: InferenceRequest) -> dict:
+def infer_keyframes(payload: InferenceRequest, request: Request) -> dict:
     if not payload.actorLockId:
         raise HTTPException(status_code=403, detail="actorLockId required")
-    return _dispatch("keyframes", payload)
+    return _dispatch("keyframes", payload, request.headers.get("x-fal-key"))
 
 
 @app.post("/v1/infer/interpolate")
-def infer_interpolate(payload: InferenceRequest) -> dict:
+def infer_interpolate(payload: InferenceRequest, request: Request) -> dict:
     if not payload.actorLockId:
         raise HTTPException(status_code=403, detail="actorLockId required")
-    return _dispatch("interpolate", payload)
+    return _dispatch("interpolate", payload, request.headers.get("x-fal-key"))

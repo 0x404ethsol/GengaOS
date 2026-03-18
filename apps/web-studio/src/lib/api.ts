@@ -3,8 +3,15 @@ import axios from "axios";
 const bearerToken = import.meta.env.VITE_API_BEARER_TOKEN as string | undefined;
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_CONTROL_API_URL ?? "http://localhost:8001",
+  // Tauri Sidecar Local Backend
+  baseURL: import.meta.env.VITE_CONTROL_API_URL ?? "http://localhost:8000",
   headers: bearerToken ? { Authorization: `Bearer ${bearerToken}` } : undefined
+});
+
+api.interceptors.request.use((config) => {
+  // Desktop Architecture: Keys are loaded server-side by the sidecar.
+  // The frontend no longer transmits API keys via headers.
+  return config;
 });
 
 export interface GraphPayload {

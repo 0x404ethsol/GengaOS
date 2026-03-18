@@ -70,11 +70,31 @@ export function RedlineApprovalPanel({
 
   return (
     <section className="panel-block redline-panel">
-      <div className="panel-head">
-        <h2>{getAnimeSectionLabel("cut")} Redline + Approval</h2>
-        <span className="pill">Status: {approvalStatus}</span>
+      <div className="panel-head" style={{ marginBottom: "15px" }}>
+        <h2 style={{ margin: 0 }}>{getAnimeSectionLabel("cut")} Redline + Approval</h2>
+        <span className="pill" style={{ background: approvalStatus === "approved" ? "#4cff91" : "#ff4c4c", color: "#000" }}>{approvalStatus}</span>
       </div>
-      <p className="muted">Frame-level redlines and approval gate controls block delivery until director sign-off.</p>
+      <p className="muted" style={{ marginBottom: "15px" }}>The Lightbox Retake Engine. Draw Over AI directly into a ControlNet fixing loop.</p>
+
+      {/* The Lightbox Onion-skin Interface */}
+      <div className="lightbox-surface" style={{ background: "#000", border: "1px solid #333", height: "180px", borderRadius: "8px", position: "relative", marginBottom: "20px", overflow: "hidden" }}>
+         <img src="https://images.unsplash.com/photo-1541562232579-512a21360020?q=80&w=400&auto=format&fit=crop" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.5 }} />
+         
+         <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
+            <path d="M50,50 Q100,100 150,60 T250,80" fill="none" stroke="#ff4c4c" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="250" cy="80" r="5" fill="#ff4c4c" />
+            <text x="150" y="45" fill="#ff4c4c" fontSize="12" fontWeight="bold">Fix Silhouette Angle</text>
+         </svg>
+         
+         <div style={{ position: "absolute", top: "10px", right: "10px", display: "flex", gap: "8px", background: "rgba(0,0,0,0.8)", padding: "4px", borderRadius: "12px" }}>
+            <button style={{ background: "#ff4c4c", width: "18px", height: "18px", borderRadius: "50%", border: "2px solid #fff", cursor: "pointer" }} />
+            <button style={{ background: "#4cff91", width: "18px", height: "18px", borderRadius: "50%", border: "none", cursor: "pointer" }} />
+            <button style={{ background: "#fff", width: "18px", height: "18px", borderRadius: "50%", border: "none", cursor: "pointer" }} />
+         </div>
+         <div style={{ position: "absolute", bottom: "10px", left: "10px", background: "rgba(0,0,0,0.8)", padding: "4px 8px", borderRadius: "4px", fontSize: "10px", color: "#fff", letterSpacing: "1px" }}>
+            🖌️ ONION SKIN ACTIVE
+         </div>
+      </div>
 
       <div className="grid-two">
         <label>

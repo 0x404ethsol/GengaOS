@@ -23,10 +23,13 @@ import { StyleDnaPanel } from "./components/StyleDnaPanel";
 import { VideoEditorPanel } from "./components/VideoEditorPanel";
 import { VoiceBridgePanel } from "./components/VoiceBridgePanel";
 import { DirectorGhostPanel } from "./components/DirectorGhostPanel";
+import { ScriptCopilotPanel } from "./components/ScriptCopilotPanel";
 import { StyleCompassHUD } from "./components/StyleCompassHUD";
 import { SakugaFlowPanel } from "./components/SakugaFlowPanel";
 import { EasyModeWizard } from "./components/EasyModeWizard";
 import { ToolsMarketplace } from "./components/ToolsMarketplace";
+import { AssetVaultPanel } from "./components/AssetVaultPanel";
+import { ComputeCorePanel } from "./components/ComputeCorePanel";
 import { createStudioCommands } from "./lib/commands";
 import { playCinematicCue } from "./lib/cues";
 
@@ -41,6 +44,7 @@ function App() {
   const [graphOutputs, setGraphOutputs] = useState<Array<{ nodeId: string; title: string; jobId?: string; status?: string }>>([]);
   const [hydrationQueue, setHydrationQueue] = useState<string[]>([]);
   const [remixPrefill, setRemixPrefill] = useState<Record<string, unknown> | null>(null);
+  const [copilotShots, setCopilotShots] = useState<any[]>([]);
   const [parsedNoteActions, setParsedNoteActions] = useState<ParsedDirectorAction[]>([]);
   const [undoStack, setUndoStack] = useState<Array<{ label: string; undo: () => void }>>([]);
   const [approvalStatus, setApprovalStatus] = useState("draft");
@@ -244,7 +248,13 @@ function App() {
       ) : (
       <div className="workspace-grid">
         <aside className="sidebar left-rail">
+          <ComputeCorePanel onStatus={setStatus} />
           <DirectorGhostPanel projectId={projectId} onStatus={setStatus} />
+          <ScriptCopilotPanel onAddShotNodes={(shots) => {
+             setCopilotShots(shots);
+             setStatus(`Script Copilot added ${shots.length} shots to graph.`);
+          }} />
+          <AssetVaultPanel onStatus={setStatus} />
           <StartupGuide onStart={onStartup} />
           <AutopilotPanel projectId={projectId} activeStyleDnaId={activeStyleDnaId} onTemplate={onTemplate} />
           <StyleDnaPanel projectId={projectId} onStyleLockChange={setActiveStyleDnaId} onStatus={setStatus} />
@@ -280,6 +290,7 @@ function App() {
               activeStyleDnaId={activeStyleDnaId}
               remixPrefill={remixPrefill}
               hydrateRequest={hydrateRequest}
+              copilotShots={copilotShots}
             />
           </main>
         </section>

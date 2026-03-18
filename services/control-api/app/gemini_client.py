@@ -33,27 +33,35 @@ MODEL_PRO   = "gemini-2.5-flash"          # smart: notes, continuity (same tier)
 MODEL_ULTRA = "gemini-3.1-pro-preview"    # most capable: Director Ghost
 
 
-def _get_client():
-    """Return a configured google-genai Client (singleton)."""
+def _get_client(api_key: str | None = None):
+    """Return a configured google-genai Client."""
     global _client
-    if _client is not None:
-        return _client
     if not _GENAI_AVAILABLE:
         return None
-    api_key = os.getenv("GEMINI_API_KEY", "").strip()
-    if not api_key:
+    resolved_key = api_key or os.getenv("GEMINI_API_KEY", "").strip()
+    if not resolved_key:
         return None
+    
+    if api_key:
+        try:
+            return genai.Client(api_key=api_key)  # type: ignore
+        except Exception as exc:
+            logger.warning("Failed to create Gemini BYOK client: %s", exc)
+            return None
+
+    if _client is not None:
+        return _client
     try:
-        _client = genai.Client(api_key=api_key)  # type: ignore[union-attr]
+        _client = genai.Client(api_key=resolved_key)  # type: ignore
         return _client
     except Exception as exc:
-        logger.warning("Failed to create Gemini client: %s", exc)
+        logger.warning("Failed to create global Gemini client: %s", exc)
         return None
 
 
-def _call(prompt: str, json_mode: bool = False, model: str = MODEL_FLASH) -> str | None:
+def _call(prompt: str, json_mode: bool = False, model: str = MODEL_FLASH, api_key: str | None = None) -> str | None:
     """Single-turn Gemini call. Returns response text or None on failure."""
-    client = _get_client()
+    client = _get_client(api_key)
     if client is None:
         return None
     try:
@@ -83,7 +91,7 @@ def _call(prompt: str, json_mode: bool = False, model: str = MODEL_FLASH) -> str
 #  SCENE IDEAS  (Flash — fast)
 # ─────────────────────────────────────────────────────────────
 
-def generate_scene_ideas(query: str, count: int = 6) -> list | None:
+def generate_scene_ideas(query: str, count: int = 6, api_key: str | None = None) -> list | None:
     prompt = f"""You are a MAPPA-level anime scene director.
 Generate {count} unique, vivid anime scene ideas based on: "{query or 'dramatic anime'}".
 
@@ -94,7 +102,7 @@ Return ONLY a JSON array. Each object must have:
 
 MAPPA / Ufotable / WIT Studio quality. Be specific and cinematic."""
 
-    raw = _call(prompt, json_mode=True, model=MODEL_FLASH)
+    raw = _call(prompt, json_mode=True, model=MODEL_FLASH, api_key=api_key)
     if not raw:
         return None
     try:
@@ -109,7 +117,7 @@ MAPPA / Ufotable / WIT Studio quality. Be specific and cinematic."""
 #  DIRECTOR NOTES PARSER  (Pro — accurate)
 # ─────────────────────────────────────────────────────────────
 
-def parse_director_notes(text: str, project_id: str) -> list | None:
+def parse_director_notes(text: str, project_id: str, api_key: str | None = None) -> list | None:
     import uuid as _uuid
     prompt = f"""You are a GengaOS AI director assistant trained on professional anime production workflows.
 
@@ -129,7 +137,7 @@ Return ONLY a JSON array. Each action object must have:
 
 Use anime production knowledge. High confidence only when unambiguous."""
 
-    raw = _call(prompt, json_mode=True, model=MODEL_PRO)
+    raw = _call(prompt, json_mode=True, model=MODEL_PRO, api_key=api_key)
     if not raw:
         return None
     try:
@@ -147,7 +155,7 @@ Use anime production knowledge. High confidence only when unambiguous."""
 #  AUTOPILOT SHOT SUGGESTER  (Flash — fast)
 # ─────────────────────────────────────────────────────────────
 
-def suggest_shots(script_beat: str) -> list | None:
+def suggest_shots(script_beat: str, api_key: str | None = None) -> list | None:
     prompt = f"""You are an AI anime cinematographer at MAPPA studio.
 
 Script beat: "{script_beat}"
@@ -162,7 +170,7 @@ Suggest 3 optimal shot templates. Return ONLY a JSON array. Each object must hav
 
 Think Jujutsu Kaisen, Demon Slayer, Attack on Titan. Cinematic and purposeful."""
 
-    raw = _call(prompt, json_mode=True, model=MODEL_FLASH)
+    raw = _call(prompt, json_mode=True, model=MODEL_FLASH, api_key=api_key)
     if not raw:
         return None
     try:
@@ -177,7 +185,7 @@ Think Jujutsu Kaisen, Demon Slayer, Attack on Titan. Cinematic and purposeful.""
 #  DIRECTOR GHOST  (Ultra — deepest analysis)
 # ─────────────────────────────────────────────────────────────
 
-def ghost_analyze(scene_context: str) -> list | None:
+def ghost_analyze(scene_context: str, api_key: str | None = None) -> list | None:
     prompt = f"""You are the GengaOS Director Ghost — an AI co-director trained on 10,000+ hours of MAPPA, Ufotable, and WIT Studio anime.
 
 Scene context: {scene_context or "Generic anime action scene, 3 cuts, no camera movement specified"}
@@ -191,10 +199,10 @@ Return 2-4 specific, actionable director suggestions as a JSON array. Each must 
 
 Be a real co-director. Reference frame timing, camera blocking, emotional beats. No generic advice."""
 
-    raw = _call(prompt, json_mode=True, model=MODEL_ULTRA)
+    raw = _call(prompt, json_mode=True, model=MODEL_ULTRA, api_key=api_key)
     if not raw:
         # Fallback to Pro if Ultra fails
-        raw = _call(prompt, json_mode=True, model=MODEL_PRO)
+        raw = _call(prompt, json_mode=True, model=MODEL_PRO, api_key=api_key)
     if not raw:
         return None
     try:
@@ -209,7 +217,7 @@ Be a real co-director. Reference frame timing, camera blocking, emotional beats.
 #  CONTINUITY ANALYSIS  (Pro)
 # ─────────────────────────────────────────────────────────────
 
-def analyze_continuity(shots: list) -> dict | None:
+def analyze_continuity(shots: list, api_key: str | None = None) -> dict | None:
     prompt = f"""You are a continuity supervisor for a professional anime studio.
 
 Analyze this shot sequence for continuity issues:
@@ -221,7 +229,7 @@ Return ONLY a JSON object with:
   axisViolations (array of string shot-pair descriptions),
   overallNotes (string summary)"""
 
-    raw = _call(prompt, json_mode=True, model=MODEL_PRO)
+    raw = _call(prompt, json_mode=True, model=MODEL_PRO, api_key=api_key)
     if not raw:
         return None
     try:

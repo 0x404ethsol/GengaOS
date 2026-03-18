@@ -26,6 +26,8 @@ import { SakugaNode } from "../nodes/SakugaNode";
 import { ScriptNode } from "../nodes/ScriptNode";
 import { TimelineNode } from "../nodes/TimelineNode";
 import { VirtualSetNode } from "../nodes/VirtualSetNode";
+import { SetteiNode } from "../nodes/SetteiNode";
+import { MultiplaneNode } from "../nodes/MultiplaneNode";
 
 const nodeTypes: NodeTypes = {
   scriptNode: ScriptNode,
@@ -35,10 +37,18 @@ const nodeTypes: NodeTypes = {
   virtualSetNode: VirtualSetNode,
   fxComposerNode: FxComposerNode,
   sakugaNode: SakugaNode,
-  extensionNode: ExtensionNode
+  extensionNode: ExtensionNode,
+  setteiNode: SetteiNode,
+  multiplaneNode: MultiplaneNode
 };
 
 const initialNodes: Node[] = [
+  {
+    id: "settei-1",
+    type: "setteiNode",
+    position: { x: -60, y: -280 },
+    data: { title: "Heroine Absolute Settei" }
+  },
   {
     id: "script-1",
     type: "scriptNode",
@@ -109,15 +119,23 @@ const initialNodes: Node[] = [
         shake: [{ frame: 42, amplitude: 0.35, frequencyHz: 6.5 }]
       }
     }
+  },
+  {
+    id: "multiplane-1",
+    type: "multiplaneNode",
+    position: { x: 1250, y: 150 },
+    data: { title: "2.5D Parallax Separator" }
   }
 ];
 
 const initialEdges: Edge[] = [
+  { id: "e-settei-actor", source: "settei-1", target: "actor-1", animated: true },
   { id: "e-script-timeline", source: "script-1", target: "timeline-1" },
   { id: "e-casting-actor", source: "casting-1", target: "actor-1" },
   { id: "e-actor-sakuga", source: "actor-1", target: "sakuga-1" },
   { id: "e-virtual-sakuga", source: "virtual-set-1", target: "sakuga-1" },
-  { id: "e-fx-sakuga", source: "fx-1", target: "sakuga-1" }
+  { id: "e-fx-sakuga", source: "fx-1", target: "sakuga-1" },
+  { id: "e-sakuga-multiplane", source: "sakuga-1", target: "multiplane-1", animated: true }
 ];
 
 interface StudioCanvasProps {
@@ -135,6 +153,7 @@ interface StudioCanvasProps {
     title: string;
     fields: Record<string, string | number | boolean>;
   } | null;
+  copilotShots?: any[];
 }
 
 export function StudioCanvas({
@@ -143,7 +162,8 @@ export function StudioCanvas({
   onGraphOutputsChange,
   activeStyleDnaId,
   remixPrefill,
-  hydrateRequest
+  hydrateRequest,
+  copilotShots
 }: StudioCanvasProps) {
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>(initialEdges);
@@ -313,6 +333,25 @@ export function StudioCanvas({
     ]);
   }, [hydrateRequest]);
 
+  useEffect(() => {
+    if (!copilotShots || copilotShots.length === 0) return;
+    setNodes((current) => {
+      const existingIds = new Set(current.map(n => n.id));
+      const copilotNodes = copilotShots.map((shot, idx) => ({
+        id: `copilot-${Date.now()}-${idx}`,
+        type: "virtualSetNode",
+        position: { x: 50 + (idx * 350), y: Math.max(0, ...current.map(n => n.position.y)) + 300 },
+        data: { 
+          title: shot.title || `AI Generated Shot ${idx+1}`, 
+          cameraPreset: "35mm medium", 
+          posePreset: "ready stance" 
+        }
+      })).filter(node => !existingIds.has(node.id));
+      
+      return [...current, ...copilotNodes];
+    });
+  }, [copilotShots]);
+
   const saveGraph = async () => {
     const payload = {
       projectId,
@@ -369,7 +408,37 @@ export function StudioCanvas({
     <div className="canvas-shell">
       <div className="canvas-toolbar">
         <button type="button" onClick={saveGraph}>{getAnimeActionLabel("saveGraphRevision")}</button>
-        <span>Revision: {revision}</span>
+        <button 
+          type="button" 
+          className="ghost-button" 
+          onClick={async () => {
+            onSnapshotChange("Dispatching Graph Execution to Local Sidecar...");
+            try {
+              const res = await fetch("http://localhost:8000/api/render-graph", {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ projectId, revision, nodes, edges })
+              });
+              const data = await res.json();
+              if (data.resultUrl || data.multiplaneLayers) {
+                setNodes(current => current.map(n => {
+                  if (n.id === "sakuga-1" && data.resultUrl) {
+                    return { ...n, data: { ...n.data, generatedUrl: data.resultUrl } };
+                  }
+                  if (n.id === "multiplane-1" && data.multiplaneLayers) {
+                    return { ...n, data: { ...n.data, layers: data.multiplaneLayers } };
+                  }
+                  return n;
+                }));
+              }
+              onSnapshotChange(`Local Sidecar Executed: ${data.msg || data.status}`);
+            } catch (err) {
+              onSnapshotChange("Failed to reach local sidecar (Verify python bridge is running).");
+            }
+          }}
+          style={{ background: "#4cff91", color: "#000", marginLeft: "1rem" }}>
+          🚀 Render Active Graph
+        </button>
+        <span style={{ marginLeft: "auto" }}>Revision: {revision}</span>
       </div>
       <div className="canvas-area">{flow}</div>
     </div>

@@ -1,122 +1,56 @@
 import { useState } from "react";
 import { Handle, Position, type NodeProps } from "@xyflow/react";
-import type { FxLayer } from "@genga/contracts";
 import type { FxComposerNodeData } from "../types";
-
-const fxTypeOptions = ["speed-lines", "impact-flash", "debris", "aura", "chromatic-hit"];
-
-function normalizeStack(layers: FxLayer[]) {
-  return layers.map((layer) => ({
-    ...layer,
-    intensity: Math.max(0, Math.min(1, layer.intensity))
-  }));
-}
 
 export function FxComposerNode({ data }: NodeProps) {
   const nodeData = data as unknown as FxComposerNodeData;
-  const [layers, setLayers] = useState<FxLayer[]>(nodeData.fxStack ?? []);
-
-  const setAndPersist = (next: FxLayer[]) => {
-    const normalized = normalizeStack(next);
-    setLayers(normalized);
-    nodeData.fxStack = normalized;
-  };
-
-  const addLayer = () => {
-    setAndPersist([
-      ...layers,
-      {
-        layerId: crypto.randomUUID(),
-        type: "speed-lines",
-        intensity: 0.65,
-        blendMode: "screen",
-        enabled: true
-      }
-    ]);
-  };
-
-  const removeLayer = (layerId: string) => {
-    setAndPersist(layers.filter((layer) => layer.layerId !== layerId));
-  };
-
-  const moveLayer = (layerId: string, direction: -1 | 1) => {
-    const index = layers.findIndex((layer) => layer.layerId === layerId);
-    if (index < 0) return;
-    const target = index + direction;
-    if (target < 0 || target >= layers.length) return;
-    const next = [...layers];
-    const [layer] = next.splice(index, 1);
-    next.splice(target, 0, layer);
-    setAndPersist(next);
-  };
-
-  const updateLayer = <K extends keyof FxLayer>(layerId: string, key: K, value: FxLayer[K]) => {
-    setAndPersist(
-      layers.map((layer) => (layer.layerId === layerId ? { ...layer, [key]: value } : layer))
-    );
-  };
+  const [layers, setLayers] = useState<any[]>(nodeData.fxStack ?? [
+     { id: "1", type: "Film-Grain (35mm)", active: true, opacity: 0.15 },
+     { id: "2", type: "Chromatic Aberration", active: true, opacity: 0.30 },
+     { id: "3", type: "Anamorphic Lens Flare", active: true, opacity: 0.75 }
+  ]);
 
   return (
-    <div className="studio-node">
+    <div className="studio-node fx-composer" style={{ minWidth: "350px", background: "#1a1e24", border: "2px solid #b34cff", borderRadius: "12px", padding: 0, overflow: "hidden", boxShadow: "0 0 20px rgba(179, 76, 255, 0.15)" }}>
       <Handle type="target" position={Position.Left} />
-      <h3>{nodeData.title}</h3>
-      <p className="muted">Layer stack output feeds Sakuga node render settings.</p>
-      <button type="button" className="ghost-button" onClick={addLayer}>Add FX Layer</button>
-      <div className="fx-layer-list">
-        {layers.map((layer, index) => (
-          <article key={layer.layerId} className="fx-layer-item">
-            <div className="fx-layer-head">
-              <strong>Layer {index + 1}</strong>
-              <div className="row-buttons">
-                <button type="button" className="ghost-button" onClick={() => moveLayer(layer.layerId, -1)}>Up</button>
-                <button type="button" className="ghost-button" onClick={() => moveLayer(layer.layerId, 1)}>Down</button>
-                <button type="button" className="danger-button" onClick={() => removeLayer(layer.layerId)}>Remove</button>
-              </div>
-            </div>
-            <div className="grid-two">
-              <label>
-                FX Type
-                <select value={layer.type} onChange={(event) => updateLayer(layer.layerId, "type", event.target.value)}>
-                  {fxTypeOptions.map((option) => (
-                    <option key={option} value={option}>{option}</option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Blend
-                <input
-                  value={layer.blendMode}
-                  onChange={(event) => updateLayer(layer.layerId, "blendMode", event.target.value)}
-                />
-              </label>
-            </div>
-            <div className="grid-two">
-              <label>
-                Intensity
-                <input
-                  type="number"
-                  min={0}
-                  max={1}
-                  step={0.05}
-                  value={layer.intensity}
-                  onChange={(event) => updateLayer(layer.layerId, "intensity", Number(event.target.value))}
-                />
-              </label>
-              <label>
-                Enabled
-                <select
-                  value={layer.enabled ? "yes" : "no"}
-                  onChange={(event) => updateLayer(layer.layerId, "enabled", event.target.value === "yes")}
-                >
-                  <option value="yes">yes</option>
-                  <option value="no">no</option>
-                </select>
-              </label>
-            </div>
-          </article>
-        ))}
+      
+      <div style={{ background: "#b34cff", padding: "8px 15px", color: "#fff", display: "flex", justifyContent: "space-between", fontWeight: "bold" }}>
+         <span>{nodeData.title || "VFX Compositor Rack"}</span>
+         <span style={{ fontSize: "10px", background: "#000", color: "#b34cff", padding: "2px 6px", borderRadius: "4px" }}>NUKE PROTOCOL</span>
       </div>
-      <p className="pill">FX Layers: {layers.length}</p>
+
+      <div style={{ padding: "15px" }}>
+        <p style={{ fontSize: "11px", color: "#888", marginBottom: "15px" }}>Applies post-processing shaders over generated frames (Bloom, Flare, Grain).</p>
+        
+        <div style={{ background: "#111", borderRadius: "6px", border: "1px solid #333", overflow: "hidden" }}>
+           <div style={{ display: "grid", gridTemplateColumns: "30px 1fr 60px", background: "#222", padding: "6px 10px", fontSize: "10px", color: "#888", borderBottom: "1px solid #333" }}>
+              <span>ON</span>
+              <span>SHADER TYPE</span>
+              <span>OPACITY</span>
+           </div>
+           
+           <div style={{ display: "flex", flexDirection: "column" }}>
+              {layers.map((layer, index) => (
+                 <div key={layer.id} style={{ display: "grid", gridTemplateColumns: "30px 1fr 60px", padding: "8px 10px", fontSize: "12px", color: "#ccc", borderBottom: index < layers.length-1 ? "1px solid #222" : "none", background: layer.active ? "#151515" : "#0d0d0d" }}>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <input type="checkbox" defaultChecked={layer.active} style={{ accentColor: "#b34cff" }} />
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", color: layer.active ? "#fff" : "#555" }}>
+                      {layer.type}
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <input type="number" defaultValue={layer.opacity} step="0.05" min="0" max="1" style={{ width: "45px", background: "#000", border: "1px solid #333", color: "#fff", fontSize: "10px", borderRadius: "3px", padding: "2px 4px" }} />
+                    </div>
+                 </div>
+              ))}
+           </div>
+        </div>
+
+        <button type="button" style={{ width: "100%", marginTop: "15px", background: "rgba(179, 76, 255, 0.1)", border: "1px dashed #b34cff", color: "#b34cff", padding: "8px", borderRadius: "4px", fontSize: "12px", cursor: "pointer" }}>
+          + Add Compositing Shader
+        </button>
+      </div>
+      
       <Handle type="source" position={Position.Right} />
     </div>
   );

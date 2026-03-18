@@ -225,9 +225,9 @@ def get_pose_preset(pose_id: str) -> dict:
 
 
 @app.get("/v1/anime/scene-ideas")
-def anime_scene_ideas(q: str = Query("", min_length=0), limit: int = Query(24, ge=1, le=100)) -> dict:
+def anime_scene_ideas(request: Request, q: str = Query("", min_length=0), limit: int = Query(24, ge=1, le=100)) -> dict:
     # Try Gemini first
-    ai_ideas = gemini_client.generate_scene_ideas(q, count=min(limit, 8))
+    ai_ideas = gemini_client.generate_scene_ideas(q, count=min(limit, 8), api_key=request.headers.get("x-gemini-key"))
     if ai_ideas:
         # Normalise AI output to match SceneIdea schema
         ideas = []
@@ -469,11 +469,11 @@ def analyze_episode_board(project_id: str) -> CriticalPathResponse:
 
 
 @app.post("/v1/notes/parse", response_model=DirectorNoteParseResponse)
-def parse_director_notes(payload: DirectorNoteParseRequest) -> DirectorNoteParseResponse:
+def parse_director_notes(payload: DirectorNoteParseRequest, request: Request) -> DirectorNoteParseResponse:
     text = payload.text.strip()
 
     # Try Gemini AI parser first
-    ai_actions = gemini_client.parse_director_notes(text, payload.projectId)
+    ai_actions = gemini_client.parse_director_notes(text, payload.projectId, api_key=request.headers.get("x-gemini-key"))
     if ai_actions:
         response = DirectorNoteParseResponse(actions=ai_actions)
         store.add_audit(
@@ -1625,9 +1625,9 @@ def get_job(job_id: str) -> dict:
 
 
 @app.post("/v1/autopilot/suggest-shot")
-def suggest_shot(payload: AutopilotSuggestRequest) -> dict:
+def suggest_shot(payload: AutopilotSuggestRequest, request: Request) -> dict:
     # Try Gemini AI shot suggester first
-    ai_suggestions = gemini_client.suggest_shots(payload.scriptBeat)
+    ai_suggestions = gemini_client.suggest_shots(payload.scriptBeat, api_key=request.headers.get("x-gemini-key"))
     if ai_suggestions:
         store.add_audit("autopilot.suggest", "gemini-ai", {"scriptBeat": payload.scriptBeat})
         return {"suggestions": ai_suggestions, "source": "gemini-2.0-flash"}
